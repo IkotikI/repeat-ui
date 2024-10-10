@@ -24,4 +24,9 @@
 			{/each}
 		</ul>
 	</nav>
+	<script
+		async
+		defer
+		src="https://static.cdn.prismic.io/prismic.js?new=true&repo=repeat-ui"
+	></script>
 </footer>
