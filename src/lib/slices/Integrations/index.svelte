@@ -13,6 +13,8 @@
 	import IconFly from '~icons/fa6-brands/fly';
 	import IconCloudflare from '~icons/fa6-brands/cloudflare';
 	import IconDigitalOcean from '~icons/fa6-brands/digital-ocean';
+	import { onMount } from 'svelte';
+	import gsap from 'gsap';
 
 	const icons = {
 		npm: IconNpm,
@@ -24,6 +26,65 @@
 	};
 
 	export let slice: Content.IntegrationsSlice;
+
+	onMount(() => {
+		const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		if (prefersReducedMotion) return;
+
+		const tl = gsap.timeline({
+			repeat: -1,
+			defaults: { ease: 'power2.inOut' }
+		});
+
+		tl.to('.pulsing-logo', {
+			keyframes: [
+				{
+					filter: 'brightness(2)',
+					opacity: 1,
+					duration: 0.4,
+					ease: 'power2.inOut'
+				},
+				{ filter: 'brightness(1)', opacity: 0.7, duration: 0.9 }
+			]
+		});
+
+		tl.to(
+			'.signal-line',
+			{
+				keyframes: [
+					{
+						backgroundPosition: '0% 0%'
+					},
+					{
+						backgroundPosition: '100% 100%',
+						stagger: { from: 'center', each: 0.3 },
+						duration: 1
+					}
+				]
+			},
+			'-=1.4'
+		);
+
+		tl.to(
+			'.pulsing-icon',
+			{
+				keyframes: [
+					{
+						opacity: 1,
+						duration: 1,
+						stagger: { from: 'center', each: 0.3 }
+					},
+					{
+						opacity: 0.4,
+						duration: 1,
+						stagger: { from: 'center', each: 0.3 }
+					}
+				]
+			},
+			'-=2'
+		);
+	});
 </script>
 
 <Bounded
@@ -54,7 +115,7 @@
 			{/if}
 			{#if item.icon !== null}
 				<div
-					class="pulsing-icon flex aspect-square shrink-0 items-center justify-center rounded-full border border-violet-50/30 bg-violet-50/25 p-3 text-3xl text-violet-100 opacity-40 md:text-3xl lg:text-5xl"
+					class="pulsing-icon z-[2] flex aspect-square shrink-0 items-center justify-center rounded-full border border-violet-50/30 bg-violet-50/25 p-3 text-3xl text-violet-100 opacity-40 md:text-3xl lg:text-5xl"
 				>
 					<svelte:component this={icons[item.icon]} />
 				</div>

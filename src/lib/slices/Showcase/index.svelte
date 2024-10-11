@@ -8,8 +8,56 @@
 
 	import PhGear from '~icons/ph/gear';
 	import PhArrowsClockwise from '~icons/ph/arrows-clockwise';
+	import { onMount } from 'svelte';
+	import gsap from 'gsap';
+	import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 
 	export let slice: Content.ShowcaseSlice;
+
+	onMount(() => {
+		const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		if (prefersReducedMotion) return;
+
+		gsap.registerPlugin(ScrollTrigger);
+
+		gsap.fromTo(
+			'.showcase__heading',
+			{
+				y: 100
+			},
+			{
+				y: 0,
+				ease: 'power2.inOut',
+				duration: 1,
+				scrollTrigger: {
+					trigger: '.showcase__heading',
+					start: 'top bottom-=40%',
+					toggleActions: 'play pause resume reverse'
+				}
+			}
+		);
+
+		gsap.fromTo(
+			'.showcase__glow',
+			{
+				scale: 0.7,
+				opacity: 0.1
+			},
+			{
+				scale: 1,
+				opacity: 0.35,
+				y: 0,
+				ease: 'power2.inOut',
+				duration: 1,
+				scrollTrigger: {
+					trigger: '.showcase__heading',
+					start: 'top bottom-=40%',
+					toggleActions: 'play pause resume reverse'
+				}
+			}
+		);
+	});
 
 	const icons = {
 		gear: PhGear,
@@ -19,10 +67,10 @@
 
 <Bounded data-slice-type={slice.slice_type} data-slice-variation={slice.variation} class="relative">
 	<div
-		class="absolute -z-10 aspect-video w-full max-w-2xl rounded bg-violet-500/10 mix-blend-screen blur-[120px] filter"
+		class="showcase__glow absolute -z-10 aspect-video w-full max-w-2xl rounded bg-violet-500 mix-blend-screen blur-[120px] filter"
 	/>
 	{#if slice.primary.heading}
-		<h2 class="text-balance text-center text-5xl font-medium md:text-7xl">
+		<h2 class="showcase__heading text-balance text-center text-5xl font-medium md:text-7xl">
 			<PrismicRichText field={slice.primary.heading} components={{ heading2: SpanHeading }} />
 		</h2>
 	{/if}
